@@ -501,8 +501,9 @@ def navigate_to_server(sb, email: str) -> tuple[bool, str, Optional[str]]:
         exp_date=expiry_date.split('Expiry')[1].split('\n')[1]
         logger.info(f"过期日期：{exp_date}")
         today=datetime.now().date()
-        delta=datetime.strptime(date0,'%Y-%m-%d').date()-today
-        if delta>1 :
+        delta=datetime.strptime(exp_date,'%Y-%m-%d').date()-today
+        delta_days=delta.days
+        if delta_days>1 :
             try:
                 logger.info("点击 Renew 按钮.")
                 sb.click('button[data-bs-target="#renew-modal"]')
@@ -517,7 +518,7 @@ def navigate_to_server(sb, email: str) -> tuple[bool, str, Optional[str]]:
             except  Exception as e:
                 logger.error(f'无法点击更新按钮.\n{e}')
         else:
-            logger.info(f'距更新日期还有{delta}天，无需更新！')
+            logger.info(f'距更新日期还有{delta_days}天，无需更新！')
     except:
         logger.error("无法获取过期日期.")
     sp_detail = screenshot_path("08-server-detail")
