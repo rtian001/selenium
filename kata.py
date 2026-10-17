@@ -132,7 +132,7 @@ def parse_single_account() -> tuple[str, str]:
 
     try:
         parts=accounts.split(',')
-        idx=int(int(time.time())/86400)%len(parts)
+        idx=int(int(time.time())/86400+1)%len(parts)
         if parts[idx]:
             email=parts[idx]
             logger.info(f"读取到账号: {mask_email(email)}")
