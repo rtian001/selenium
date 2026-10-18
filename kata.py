@@ -499,13 +499,6 @@ def navigate_to_server(sb, email: str) -> tuple[bool, str, Optional[str]]:
     current_url = sb.get_current_url()
     logger.info(f"详情页URL: {mask_url(current_url)}")
 
-    if "/servers/" in current_url:
-        server_id = _extract_server_id(current_url)
-        logger.info("✅ 成功进入服务器详情页")
-        return True, server_id, sp_detail
-    else:
-        logger.error("未能进入服务器详情页")
-        return False, "NAV_ERROR", sp_detail
 
     try:
         sb.wait_for_element_visible("#profile-overview", timeout=10)
@@ -532,9 +525,16 @@ def navigate_to_server(sb, email: str) -> tuple[bool, str, Optional[str]]:
             logger.info(f'距更新日期还有{delta_days}天，无需更新！')
     except:
         logger.error("无法获取过期日期.")
-    # sp_detail = screenshot_path("08-server-detail")
+    sp_detail = screenshot_path("08-server-detail")
     # safe_screenshot(sb, sp_detail)
 
+    if "/servers/" in current_url:
+        server_id = _extract_server_id(current_url)
+        logger.info("✅ 成功进入服务器详情页")
+        return True, server_id, sp_detail
+    else:
+        logger.error("未能进入服务器详情页")
+        return False, "NAV_ERROR", sp_detail
 
 
 # ================== 主登录函数 ==================
