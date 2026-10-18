@@ -39,7 +39,7 @@ jobs:
           if [ -z "$HY2_URL" ]; then
             echo "HY2_URL 未设置，跳过代理配置，使用直连模式"
             echo "PROXY_SERVER=" >> $GITHUB_ENV
-            exit 0
+            # exit 0
           fi
           chmod +x hysteria
 
