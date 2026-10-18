@@ -545,7 +545,7 @@ def betadash_login(
     result = {"success": False, "message": "", "screenshot": None}
 
     logger.info("=" * 50)
-    logger.info(f"Betadash 保活 | 邮箱: {mask_email(email)}")
+    logger.info(f"Kata保活 | 邮箱: {mask_email(email)}")
     logger.info("=" * 50)
 
     for attempt in range(max_retries):
