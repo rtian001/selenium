@@ -91,7 +91,7 @@ def safe_screenshot(sb, path: str):
 
 
 def notify_telegram(email: str, ok: bool, msg: str = "", screenshot_file: str = None):
-    return 
+    # return 
     try:
         tg_api = os.environ.get("TG_API")
         if not tg_api:
@@ -621,19 +621,27 @@ def betadash_login(
 
 
 # ================== 主程序 ==================
-def main(id):
-    email, password = parse_single_account(id)
+def main():
     proxy = os.environ.get("PROXY_SERVER")
     display = setup_display()
     try:
+        email, password = parse_single_account(0)
         result = betadash_login(email, password, proxy, max_retries=1)
-
         notify_telegram(
             email=email,
             ok=result["success"],
             msg=result["message"],
             screenshot_file=result["screenshot"],
-        )
+        )        
+        time.sleep(5)
+        email, password = parse_single_account(1)
+        result = betadash_login(email, password, proxy, max_retries=1)
+        notify_telegram(
+            email=email,
+            ok=result["success"],
+            msg=result["message"],
+            screenshot_file=result["screenshot"],
+        ) 
 
         if result["success"]:
             logger.info("✅ 保活流程完成")
@@ -647,6 +655,5 @@ def main(id):
             display.stop()
 
 if __name__ == "__main__":
-    main(0)
-    time.sleep(5)
-    main(1)
+    main()
+
