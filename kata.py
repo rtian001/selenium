@@ -123,7 +123,7 @@ def check_and_exit_on_rate_limit(sb, email: str) -> None:
         pass
 
 
-def parse_single_account() -> tuple[str, str]:
+def parse_single_account(idx=0) -> tuple[str, str]:
     accounts=os.environ.get("ACCOUNTS", "").strip()
     password=os.environ.get("PASSWORD", "").strip()
     if not accounts or not password:
@@ -132,10 +132,11 @@ def parse_single_account() -> tuple[str, str]:
 
     try:
         parts=accounts.split(',')
-        now=datetime.now()
-        now_h=now.hour
-        idx=now_h%len(parts)
+        # now=datetime.now()
+        # now_h=now.hour
+        # idx=now_h%len(parts)
         # idx=int(int(time.time())/86400+1)%len(parts)
+        if idx>=len(parts):idx=0
         if parts[idx]:
             email=parts[idx]
             logger.info(f"读取到账号: {mask_email(email)}")
@@ -620,8 +621,8 @@ def betadash_login(
 
 
 # ================== 主程序 ==================
-def main():
-    email, password = parse_single_account()
+def main(id):
+    email, password = parse_single_account(id)
     proxy = os.environ.get("PROXY_SERVER")
     display = setup_display()
     try:
@@ -646,4 +647,6 @@ def main():
             display.stop()
 
 if __name__ == "__main__":
-    main()
+    main(0)
+    time.sleep(5)
+    main(1)
