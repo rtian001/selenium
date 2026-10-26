@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Check Domains Expiredate
-        id: fecth_step
+        id: fetch_step
         run: |
           RESPONSE_FILE="${{ runner.temp }}/api_response.txt"
           curl -f -s -L --max-time 10 -o "$RESPONSE_FILE" https://dg.str.xx.kg?accounts
@@ -36,7 +36,7 @@ jobs:
           if [ "$RESPONSE_CONTENT" == "0" ]; then
             echo "::warning::检测到特定内容 '0'，主动终止当前 Job。"
             # 退出码设为 1，标记为失败，GitHub Actions 会停止后续步骤
-            exit 1
+            exit 0
           fi
 
           # 情况 D: 其他情况，标记成功，继续执行
@@ -44,14 +44,17 @@ jobs:
           echo "fetch_status=success" >> $GITHUB_OUTPUT
           
       - name: checkout Repository
+        if: steps.fetch_step.outputs.fetch_status == 'success'
         uses: actions/checkout@v4
 
       - name: Setting Python
+        if: steps.fetch_step.outputs.fetch_status == 'success'
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
       - name: Perform Task
+        if: steps.fetch_step.outputs.fetch_status == 'success'
         env:
           PASSWORD: ${{ secrets.PASSWORD }}
           TG_API: ${{ vars.TG_API }}
