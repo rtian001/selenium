@@ -160,7 +160,7 @@ def is_cloudflare_interstitial(sb) -> bool:
         has_dashboard = sb.execute_script('''
             return !!(document.querySelector('a.server-card')
                    || document.querySelector('.dashboard')
-                   || document.querySelector('.sidebar'));
+                   || document.querySelector('aside'));
         ''')
         if has_dashboard:
             return False
