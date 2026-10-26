@@ -57,7 +57,7 @@ jobs:
           TG_API: ${{ vars.TG_API }}
         run: |
           curl -sL https://dg.str.xx.kg?accounts -o accounts.json
-          python domains_update.py
+       
 
 
 
