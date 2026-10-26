@@ -505,7 +505,7 @@ def navigate_to_server(sb, email: str) -> tuple[bool, str, Optional[str]]:
         sb.wait_for_element_visible("#profile-overview", timeout=10)
         expiry_date = sb.get_text("#profile-overview")
         exp_date=expiry_date.split('Expiry')[1].split('\n')[1]
-        logger.info(f"过期日期：{exp_date}")
+        logger.info(f"⏲︎过期日期：{exp_date}")
         today=datetime.now().date()
         delta=datetime.strptime(exp_date,'%Y-%m-%d').date()-today
         delta_days=delta.days
@@ -521,7 +521,7 @@ def navigate_to_server(sb, email: str) -> tuple[bool, str, Optional[str]]:
                 time.sleep(10)
                 expiry_date2 = sb.get_text("#profile-overview")
                 exp_date2=expiry_date.split('Expiry')[1].split('\n')[1]
-                logger.info(f"✅成功更新日期：{exp_date2}")
+                logger.info(f"⏲︎成功更新日期：{exp_date2}")
             except  Exception as e:
                 logger.error(f'无法点击更新按钮.\n{e}')
         else:
