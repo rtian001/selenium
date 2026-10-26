@@ -29,7 +29,7 @@ jobs:
             echo "::error::请求失败，退出码: $CURL_EXIT_CODE"
             exit $CURL_EXIT_CODE
           fi
-
+          RESPONSE_CONTENT=$(cat "$RESPONSE_FILE")
           if [ "$RESPONSE_CONTENT" == "0" ]; then
             echo "::warning::未获取到有效账号，退出作业。"
             exit 0
@@ -37,6 +37,7 @@ jobs:
 
           # 情况 D: 其他情况，标记成功，继续执行
           echo "获取到有效账号，执行WEB登录步骤。"
+          cat $RESPONSE_CONTENT |jq
           echo "fetch_status=success" >> $GITHUB_OUTPUT
           
       - name: checkout Repository
