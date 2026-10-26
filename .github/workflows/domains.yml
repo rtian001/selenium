@@ -22,7 +22,7 @@ jobs:
       - name: Check Domains Expiredate
         id: fetch_step
         run: |
-          RESPONSE_FILE="${{ runner.temp }}/api_response.txt"
+          RESPONSE_FILE="${{ runner.temp }}/accounts.json"
           curl -f -s -L --max-time 10 -o "$RESPONSE_FILE" https://dg.str.xx.kg?accounts
           CURL_EXIT_CODE=$?
           if [ $CURL_EXIT_CODE -ne 0 ]; then
@@ -59,7 +59,8 @@ jobs:
           PASSWORD: ${{ secrets.PASSWORD }}
           TG_API: ${{ vars.TG_API }}
         run: |
-          curl -sL https://dg.str.xx.kg?accounts -o accounts.json
+          cp $RESPONSE_CONTENT ./accounts.json
+          python test.py
        
 
 
