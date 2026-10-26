@@ -59,7 +59,7 @@ jobs:
           PASSWORD: ${{ secrets.PASSWORD }}
           TG_API: ${{ vars.TG_API }}
         run: |
-          cp $RESPONSE_CONTENT ./accounts.json
+          cp ${{ runner.temp }}/accounts.json ./accounts.json
           python test.py
        
 
