@@ -561,7 +561,7 @@ def betadash_login(
                         result["screenshot"] = screenshot_path("05-login-failed")
                         logger.warning(result["message"])
                         break
-
+                return result
                 nav_ok, server_id, screenshot = navigate_to_server(sb, email)
 
                 if nav_ok:
