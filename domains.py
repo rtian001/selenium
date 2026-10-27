@@ -564,6 +564,11 @@ def betadash_login(
                         result["screenshot"] = screenshot_path("05-login-failed")
                         logger.warning(result["message"])
                         break
+                result.update(
+                        success=True,
+                        message="登录成功，尚未进行续期",
+                        screenshot=screenshot,
+                )
                 return result
                 nav_ok, server_id, screenshot = navigate_to_server(sb, email)
 
