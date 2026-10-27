@@ -127,7 +127,7 @@ def parse_single_account() -> tuple[str, str]:
     accounts=json.load(open('accounts.json'))
     # accounts=os.environ.get("ACCOUNTS", "").strip()
     password=os.environ.get("PASSWORD", "").strip()
-    return 'andrew@ggmail.cloudns.be',password
+    # return 'andrew@ggmail.cloudns.be',password
     if not accounts or not password:
         logger.error("未设置环境变量 ACCOUNTS 或 PASSWORD，请设置Secrets:PASSWORD;Variables:ACCOUNTS")
         sys.exit(1)
