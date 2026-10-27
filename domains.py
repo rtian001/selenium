@@ -486,7 +486,7 @@ def betadash_login(
 
                 ## 登录成功，后续操作： 续期
                 # 测试，仅测试登录
-                domains=ACCOUNTS[email]
+                domains=list(ACCOUNTS[email].keys())
                 navigate_to_server(sb, domains[0])
                 return result
                 nav_ok, server_id, screenshot = navigate_to_server(sb, email)
