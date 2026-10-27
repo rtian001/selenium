@@ -21,7 +21,7 @@ BETADASH_LOGIN_URL = "https://dashboard.digitalplat.org/auth/login"
 OUTPUT_DIR = Path("output/screenshots")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 Allow_screenshot=True
-
+ACCOUNTS=json.load(open('accounts.json'))
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
@@ -124,28 +124,15 @@ def check_and_exit_on_rate_limit(sb, email: str) -> None:
 
 
 def parse_single_account() -> tuple[str, str]:
-    accounts=json.load(open('accounts.json'))
-    # accounts=os.environ.get("ACCOUNTS", "").strip()
+    accounts=list(ACCOUNTS.keys())
     password=os.environ.get("PASSWORD", "").strip()
-    # return 'andrew@ggmail.cloudns.be',password
     if not accounts or not password:
         logger.error("未设置环境变量 ACCOUNTS 或 PASSWORD，请设置Secrets:PASSWORD;Variables:ACCOUNTS")
         sys.exit(1)
+    account=accounts[0]
+    return account,password
 
-    try:
-        parts=list(accounts.keys())
-        idx=int(int(time.time())/86400)%len(parts)
-        if parts[idx]:
-            email=parts[idx]
-            logger.info(f"读取到账号: {mask_email(email)}")
-            return email, password
-        else:
-            logger.error("ACCOUNTS 中邮箱或密码为空")
-            sys.exit(1)
 
-    except Exception as e:
-        logger.error(f"解析 ACCOUNTS 失败: {e}")
-        sys.exit(1)
 
 
 # ================== Cloudflare 处理 ==================
