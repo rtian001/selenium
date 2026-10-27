@@ -424,7 +424,7 @@ def navigate_to_server(sb, domain: str) -> tuple[bool, str, Optional[str]]:
             logger.info('续费按钮可用')
             try:
                 expire_info = sb.get_text("main section")
-                expire_datestr = re.split(r'Expiration date|LifecyclePermanent',expire_info)[1]
+                expire_datestr = re.split(r'Expiration date|Lifecycle',expire_info)[1].strip()
                 expire_date=datetime.strptime(expire_datestr,'%b %d, %Y').strftime('%Y-%m-%d')
                 logger.info(f'过期日期：{expire_date}')
                 sb.click(renew_button)
