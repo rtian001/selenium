@@ -375,7 +375,7 @@ def fill_and_submit(sb, email: str, password: str) -> bool:
 
     if not submitted:
         try:
-            sb.execute_script('document.querySelector("form").submit()')
+            sb.execute_script('document.querySelector("form>button").click()')
             submitted = True
             logger.info("通过 JS 提交")
         except:
@@ -404,7 +404,8 @@ def fill_and_submit(sb, email: str, password: str) -> bool:
         safe_screenshot(sb, sp)
         logger.error("登录失败 - 仍在登录页")
         return False
-
+    sp = screenshot_path("05-login-success")
+    safe_screenshot(sb, sp)
     logger.info("✅ 登录成功！")
     return True
 
