@@ -96,12 +96,12 @@ jobs:
           TG_API: ${{ vars.TG_API }}
         run: |
           cp ${{ runner.temp }}/accounts.json ./accounts.json
-          python test.py
+          python domains.py
        
 
       - name: Upload Test Images
+        if: steps.fetch_step.outputs.fetch_status == 'success'
         uses: actions/upload-artifact@v4
-        if: always()
         with:
            name: screenshots-${{ github.run_number }}
            path: output/screenshots/
