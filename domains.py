@@ -407,22 +407,27 @@ def _extract_server_id(url: str) -> str:
 def navigate_to_server(sb, domain: str) -> tuple[bool, str, Optional[str]]:
     domain_url=f'https://dashboard.digitalplat.org/domains/{domain}'
     sb.open(domain_url)
-    primary_selector='button[id*=renew]'
+    renew_table='button[id*=renew]'
     try:
-        sb.wait_for_element_visible(primary_selector, timeout=15)
+        sb.wait_for_element_visible(renew_table, timeout=15)
         sp = screenshot_path("06-renew-page")
         safe_screenshot(sb, sp)
-        found_selector = primary_selector
-        sb.click(found_selector)
+        sb.click(renew_table)
         logger.info("✅ 找到更新标签")
         sb.sleep(3)
-        renew_selector='div[id*=renew] button'
-        sb.wait_for_element_visible(renew_selector, timeout=15)
+        renew_button='div[id*=renew] button'
+        sb.wait_for_element_visible(renew_button, timeout=15)
         sp = screenshot_path("06-renew-button")
         safe_screenshot(sb, sp)
-        renew_ok=sb.is_element_visible(renew_selector) 
+        renew_ok=sb.is_element_visible(renew_button) 
         if renew_ok:
             logger.info('续费按钮可用')
+            expire_info = sb.get_text("section div[data-slot=card-content]")
+            expire_datestr = re.split(r'Expiration date|LifecyclePermanent',expire_info)[1]
+            expire_date=datetime.strptime(expire_datestr,'%b %d, %Y').strftime('%Y-%m-%d')
+            logger.info(f'过期日期：{expire_date}')
+            sb.click(renew_button)
+            ############# 等待后续完善
         else:
             logger.info('暂时无法续费')
         
