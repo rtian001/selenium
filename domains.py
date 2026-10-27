@@ -404,105 +404,33 @@ def _extract_server_id(url: str) -> str:
     return match.group(1) if match else "Unknown"
 
 
-def navigate_to_server(sb, email: str) -> tuple[bool, str, Optional[str]]:
-    time.sleep(3)
-
-    sp_dash = screenshot_path("06-dashboard")
-    safe_screenshot(sb, sp_dash)
-
-    check_and_exit_on_rate_limit(sb, email)
-
-    current_url = sb.get_current_url()
-    logger.info(f"仪表盘URL: {mask_url(current_url)}")
-
-    if "/servers/" in current_url:
-        logger.info("✅ 已在服务器详情页")
-        server_id = _extract_server_id(current_url)
-        logger.info(f"服务器卡片 ID: {mask_server_id(server_id)}")
-        return True, server_id, sp_dash
-
-    found_selector = None
-    primary_selector = 'a.server-card'
-    alt_selectors = [
-        'a[href*="/servers/"]',
-        '.server-card',
-        'div.server-card',
-        'a[class*="server"]',
-    ]
-
+def navigate_to_server(sb, domain: str) -> tuple[bool, str, Optional[str]]:
+    domain_url=f'https://dashboard.digitalplat.org/domains/{domain}'
+    sb.open(domain_url)
+    primary_selector='button[id*=renew]'
     try:
         sb.wait_for_element_visible(primary_selector, timeout=15)
-        found_selector = primary_selector
-        logger.info("✅ 找到服务器卡片")
-    except TimeoutException:
-        for sel in alt_selectors:
-            try:
-                sb.wait_for_element_visible(sel, timeout=5)
-                found_selector = sel
-                logger.info(f"✅ 通过备选选择器找到服务器: {sel}")
-                break
-            except:
-                continue
-
-    if found_selector is None:
-        sp = screenshot_path("07-no-server")
+        sp = screenshot_path("06-renew-page")
         safe_screenshot(sb, sp)
-
-        try:
-            body_text = sb.execute_script(
-                "return document.body ? document.body.innerText.trim() : '';"
-            )
-            no_server_hints = [
-                "no server", "no servers", "没有服务器", "create a server",
-                "get started", "deploy", "no instance", "no instances",
-            ]
-            body_lower = body_text.lower()
-            is_no_server = any(hint in body_lower for hint in no_server_hints)
-
-            if is_no_server:
-                logger.warning("⚠️  该账号下没有服务器（可能已被删除或未创建）")
-                return False, "NO_SERVER", sp
-            else:
-                logger.error(f"未找到服务器卡片，页面内容片段: {body_text[:200]}")
-                return False, "PAGE_ERROR", sp
-        except Exception as e:
-            logger.error(f"读取页面内容失败: {e}")
-            return False, "PAGE_ERROR", sp
-
-    try:
-        href = sb.execute_script(f"return document.querySelector('{found_selector}').getAttribute('href') || '';")
-        card_id = _extract_server_id(href) if href else "Unknown"
-    except:
-        card_id = "Unknown"
-    logger.info(f"服务器卡片 ID: {mask_server_id(card_id)}")
-
-    logger.info("进入服务器详情页...")
-    try:
+        found_selector = primary_selector
         sb.click(found_selector)
+        logger.info("✅ 找到更新标签")
+        sb.sleep(3)
+        renew_selector='div[id*=renew] button'
+        sb.wait_for_element_visible(renew_selector, timeout=15)
+        sp = screenshot_path("06-renew-button")
+        safe_screenshot(sb, sp)
+        renew_ok=sb.is_element_visible(renew_selector) 
+        if renew_ok:
+            logger.info('续费按钮可用')
+        else:
+            logger.info('暂时无法续费')
+        
     except:
-        try:
-            sb.execute_script(f'''
-                var card = document.querySelector('{found_selector}');
-                if (card) card.click();
-            ''')
-        except:
-            logger.error("无法点击服务器卡片")
-            return False, "CLICK_ERROR", sp_dash
+        return False, "NAV_ERROR", ''
 
-    time.sleep(5)
-    current_url = sb.get_current_url()
-    logger.info(f"详情页URL: {mask_url(current_url)}")
 
-    sp_detail = screenshot_path("08-server-detail")
-    safe_screenshot(sb, sp_detail)
 
-    if "/servers/" in current_url:
-        server_id = _extract_server_id(current_url)
-        logger.info("✅ 成功进入服务器详情页")
-        return True, server_id, sp_detail
-    else:
-        logger.error("未能进入服务器详情页")
-        return False, "NAV_ERROR", sp_detail
 
 
 # ================== 主登录函数 ==================
@@ -556,6 +484,11 @@ def betadash_login(
                         message="登录成功，尚未进行续期",
                         screenshot=screenshot,
                 )
+
+                ## 登录成功，后续操作： 续期
+                # 测试，仅测试登录
+                domains=ACCOUNTS[email]
+                navigate_to_server(sb, domains[0])
                 return result
                 nav_ok, server_id, screenshot = navigate_to_server(sb, email)
 
@@ -568,21 +501,7 @@ def betadash_login(
                     logger.info("✅ 保活成功！")
                     return result
 
-                if server_id == "NO_SERVER":
-                    result.update(
-                        success=True,
-                        message="登录成功，但该账号下没有服务器（可能已被删除）",
-                        screenshot=screenshot,
-                    )
-                    logger.warning("⚠️  账号保活成功（无服务器），请确认服务器状态")
-                    return result
-                else:
-                    result.update(
-                        message=f"导航失败: {server_id}",
-                        screenshot=screenshot,
-                    )
-                    logger.error(f"导航失败 (code={server_id})，不再重试")
-                    return result
+
 
         except Exception as e:
             logger.exception(f"执行异常: {e}")
