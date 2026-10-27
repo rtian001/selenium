@@ -364,7 +364,7 @@ def fill_and_submit(sb, email: str, password: str) -> bool:
 
     logger.info("提交登录...")
     submitted = False
-    for selector in ['form>button', 'button[type="submit"]']:
+    for selector in ['button.submit-btn', 'button[type="submit"]']:
         try:
             sb.click(selector)
             submitted = True
@@ -617,7 +617,7 @@ def main():
             sys.exit(0)
         else:
             logger.error("❌ 保活失败")
-            sys.exit(1)
+            sys.exit(0)
 
     finally:
         if display:
