@@ -19,7 +19,7 @@ from seleniumbase.common.exceptions import TimeoutException
 BETADASH_LOGIN_URL = "https://dashboard.digitalplat.org/auth/login"
 OUTPUT_DIR = Path("output/screenshots")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-Allow_screenshot=False
+Allow_screenshot=True
 
 logging.basicConfig(
     level=logging.INFO,
