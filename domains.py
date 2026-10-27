@@ -481,8 +481,7 @@ def betadash_login(
                         break
                 result.update(
                         success=True,
-                        message="登录成功，尚未进行续期",
-                        screenshot=screenshot,
+                        message="登录成功，尚未进行续期"
                 )
 
                 ## 登录成功，后续操作： 续期
