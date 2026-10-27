@@ -38,7 +38,7 @@ jobs:
           fi
 
           # 情况 D: 其他情况，标记成功，继续执行
-          echo "::notice::获取到有效账号，执行WEB登录步骤。"
+          echo "::warning::获取到有效账号，执行WEB登录步骤。"
           echo $RESPONSE_CONTENT |jq
           echo "fetch_status=success" >> $GITHUB_OUTPUT
           
