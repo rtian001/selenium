@@ -5,6 +5,7 @@ import os
 import sys
 import time
 import re
+import json
 import platform
 import logging
 import requests
@@ -123,7 +124,8 @@ def check_and_exit_on_rate_limit(sb, email: str) -> None:
 
 
 def parse_single_account() -> tuple[str, str]:
-    accounts=os.environ.get("ACCOUNTS", "").strip()
+    accounts=json.load(open('accounts.json'))
+    # accounts=os.environ.get("ACCOUNTS", "").strip()
     password=os.environ.get("PASSWORD", "").strip()
     return 'andrew@ggmail.cloudns.be',password
     if not accounts or not password:
@@ -131,7 +133,7 @@ def parse_single_account() -> tuple[str, str]:
         sys.exit(1)
 
     try:
-        parts=accounts.split(',')
+        parts=accounts.keys()
         idx=int(int(time.time())/86400)%len(parts)
         if parts[idx]:
             email=parts[idx]
