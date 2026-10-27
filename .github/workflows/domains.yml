@@ -5,10 +5,9 @@ on:
     # 每10天运行：1号、11号、21号 中午12:12 (北京时间)
     # UTC 时间 = 北京时间 - 8小时 = 04:12
     # - cron: '1 1 1 * *'
-  # workflow_dispatch:
+  workflow_dispatch:
   repository_dispatch:   
-    types:
-      - remoteapi   #触发事件名称
+    types: [ct8,home,kata]   #触发事件名称
 
 jobs:
   keepalive:
