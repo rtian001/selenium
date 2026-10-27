@@ -422,12 +422,15 @@ def navigate_to_server(sb, domain: str) -> tuple[bool, str, Optional[str]]:
         renew_ok=sb.is_element_visible(renew_button) 
         if renew_ok:
             logger.info('续费按钮可用')
-            expire_info = sb.get_text("section div[data-slot=card-content]")
-            expire_datestr = re.split(r'Expiration date|LifecyclePermanent',expire_info)[1]
-            expire_date=datetime.strptime(expire_datestr,'%b %d, %Y').strftime('%Y-%m-%d')
-            logger.info(f'过期日期：{expire_date}')
-            sb.click(renew_button)
-            ############# 等待后续完善
+            try:
+                expire_info = sb.get_text("main section")
+                expire_datestr = re.split(r'Expiration date|LifecyclePermanent',expire_info)[1]
+                expire_date=datetime.strptime(expire_datestr,'%b %d, %Y').strftime('%Y-%m-%d')
+                logger.info(f'过期日期：{expire_date}')
+                sb.click(renew_button)
+                ############# 等待后续完善
+            except  Exception as e:
+                logger.info(f'无法获取信息.{e}')
         else:
             logger.info('暂时无法续费')
         
