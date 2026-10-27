@@ -301,7 +301,7 @@ def handle_initial_page(sb, email: str) -> Optional[str]:
     logger.info("等待登录表单...")
     for wait_round in range(3):
         try:
-            sb.wait_for_element_visible('input[name="username"]', timeout=10)
+            sb.wait_for_element_visible('input[name="email"]', timeout=10)
             logger.info("✅ 找到登录表单")
             return "need_login"
         except TimeoutException:
@@ -325,10 +325,10 @@ def fill_and_submit(sb, email: str, password: str) -> bool:
     logger.info("填写登录信息...")
 
     try:
-        sb.clear('input[name="username"]')
+        sb.clear('input[name="email"]')
     except:
         pass
-    sb.type('input[name="username"]', email)
+    sb.type('input[name="email"]', email)
     time.sleep(0.5)
 
     try:
@@ -364,7 +364,7 @@ def fill_and_submit(sb, email: str, password: str) -> bool:
 
     logger.info("提交登录...")
     submitted = False
-    for selector in ['button.submit-btn', 'button[type="submit"]']:
+    for selector in ['form>button', 'button[type="submit"]']:
         try:
             sb.click(selector)
             submitted = True
