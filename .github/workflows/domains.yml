@@ -49,6 +49,38 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          run: |
+            sudo apt-get update && sudo apt-get install -y xvfb
+            pip install seleniumbase pyvirtualdisplay requests
+        env:
+          HY2_URL: ${{ vars.HY2_URL }}
+          run: |
+            exit 0
+            if [ -z "$HY2_URL" ]; then
+              echo "HY2_URL 未设置，跳过代理配置，使用直连模式"
+              echo "PROXY_SERVER=" >> $GITHUB_ENV
+              exit 0
+            fi
+            chmod +x hysteria
+  
+            URL="${HY2_URL#hysteria2://}"
+            PASSWORD="${URL%%@*}"
+            SERVER="${URL#*@}"; SERVER="${SERVER%%\?*}"
+            SNI=$(echo "$URL" | grep -oP 'sni=\K[^&]+' || echo "${SERVER%%:*}")
+  
+            cat > hy2.yaml << EOF
+            server: ${SERVER}
+            auth: ${PASSWORD}
+            tls:
+              sni: ${SNI}
+              insecure: true
+            http:
+              listen: 127.0.0.1:7890
+            EOF
+  
+            ./hysteria client --disable-update-check -c hy2.yaml &
+            sleep 3
+            echo "PROXY_SERVER=http://127.0.0.1:7890" >> $GITHUB_ENV
 
       - name: Perform Task
         if: steps.fetch_step.outputs.fetch_status == 'success'
