@@ -515,6 +515,8 @@ def navigate_to_server(sb, email: str) -> tuple[bool, str, Optional[str]]:
                 sb.js_click('#renew-modal button[type=submit]')
                 logger.info("正在更新...")
                 sb.wait_for_element_visible('#main>.alert', timeout=30)
+                current_url = sb.get_current_url()
+                logger.info(f"当前URL：{current_url}")
                 sb.open(current_url)
                 time.sleep(10)
                 sb.wait_for_element_visible("#profile-overview", timeout=10)
